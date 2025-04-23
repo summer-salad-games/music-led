@@ -5,32 +5,45 @@ Controller::Controller() {}
 void Controller::begin()
 {
     FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS);
-    FastLED.setCorrection(TypicalLEDStrip);
     FastLED.setBrightness(BRIGHTNESS);
     FastLED.setMaxPowerInVoltsAndMilliamps(MAX_VOLTAGE, MAX_CURRENT);
     FastLED.clear();
     delay(SETUP_DEBOUNCE);
     Serial.println("Controller initialized.");
-
 }
 
 void Controller::update()
 {
-    for (int i = 0; i < NUM_LEDS; i++)
+}
+
+void Controller::setColor(CRGB &color, uint8_t &led)
+{
+    if (led > NUM_LEDS - 1)
     {
-        FastLED.clear();
-        leds[i] = CRGB(0, 255, 0);
-        FastLED.show();
-        delay(25);
+        led = NUM_LEDS - 1;
     }
 
-    for (int i = NUM_LEDS - 1; i >= 0; i--)
+    if (led < 0)
     {
-        FastLED.clear();
-        leds[i] = CRGB(0, 0, 255);
-        FastLED.show();
-        delay(25);
+        led = 0;
     }
+
+    leds[led] = color;
+    FastLED.show();
+}
+
+void Controller::fadeToColor(CRGB &color, uint8_t &led, unsigned long &duration)
+{
+    if (duration == 0)
+    {
+        duration = 1;
+    }
+    
+
+    factor = (factor + 5) % 255;
+
+    leds[led] = leds[led].lerp8(color, factor);
 
     FastLED.show();
+    delay(duration);
 }

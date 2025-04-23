@@ -29,11 +29,3 @@ This project uses [PlatformIO](https://platformio.org/) to control LEDs that rea
 1. Connect the LED strip and audio input module to your microcontroller.
 2. Power the setup and play music.
 3. Enjoy the synchronized LED effects!
-
-## Configuration
-
-Modify the `config.h` file to adjust settings such as:
-
-- LED pin
-- Number of LEDs
-- Audio sensitivity
