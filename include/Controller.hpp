@@ -1,5 +1,6 @@
-#include <Arduino.h>
-#include <FastLED.h>
+#include "LedStrip.hpp"
+#include "Button.hpp"
+#include "Knob.hpp"
 
 #ifndef CONTROLLER_HPP
 #define CONTROLLER_HPP
@@ -7,23 +8,21 @@
 class Controller
 {
 public:
-    Controller();
+    Controller(LedStrip &ledStrip, Button &button, Knob &brightnessKnob, Knob &hueKnob);
     void begin();
     void update();
-    void setColor(CRGB &color, uint8_t &led);
-    void fadeToColor(CRGB &color, uint8_t &led, unsigned long &duration);
 
 private:
-    static constexpr uint8_t NUM_LEDS = 60;
-    static constexpr uint8_t BRIGHTNESS = 10;
-    static constexpr uint8_t DATA_PIN = 5;
-    static constexpr uint8_t MAX_VOLTAGE = 5;
-    static constexpr uint16_t MAX_CURRENT = 2000;
-    static constexpr uint16_t SETUP_DEBOUNCE = 2000;
+    LedStrip &ledStrip;
+    Button &button;
 
-    CRGB color = CRGB::Black;
-    uint8_t factor = 0;
-    CRGB leds[NUM_LEDS];
+    Knob &brightnessKnob;
+    Knob &hueKnob;
+
+    uint16_t lastBrightnessValue;
+    uint16_t lastHueValue;
+
+    void initMessage();
 };
 
 #endif

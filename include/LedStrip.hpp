@@ -1,0 +1,31 @@
+#include <FastLED.h>
+
+#ifndef LEDSTRIP_HPP
+#define LEDSTRIP_HPP
+
+class LedStrip
+{
+public:
+    LedStrip();
+    void begin();
+    void update();
+    void setHue(uint8_t &hue);
+    void setLevel(uint8_t &level);
+    void setMode(uint8_t &mode);
+    void setSoundIntensity(uint8_t &soundIntensity);
+
+private:
+    static const uint8_t NUM_LEDS = 60;
+    static const uint8_t INIT_BRIGHTNESS = 255;
+    static const uint8_t DATA_PIN = 11;
+    static const uint8_t MAX_VOLTAGE = 5;
+    static const uint16_t MAX_CURRENT = 2000;
+
+    CRGB INIT_COLOR = CRGB::Red;
+    CRGB leds[NUM_LEDS];
+
+    void initColor();
+    void initMessage();
+};
+
+#endif
