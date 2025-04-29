@@ -27,14 +27,23 @@ void LedStrip::setHue(uint8_t &hue)
     FastLED.show();
 }
 
-void LedStrip::setLevel(uint8_t &level)
+void LedStrip::setBrightness(uint8_t &beightness)
 {
-    FastLED.setBrightness(level);
+    FastLED.setBrightness(beightness);
     FastLED.show();
 }
 
-void LedStrip::setSoundIntensity(uint8_t &soundIntensity)
+void LedStrip::setSoundIntensity(long &soundIntensity)
 {
+    FastLED.clear();
+
+    for (int i = 0; i < soundIntensity; i++)
+    {
+        leds[i] = INIT_COLOR;
+    }
+
+    FastLED.show();
+
 }
 
 void LedStrip::initColor()

@@ -10,9 +10,9 @@ public:
     void begin();
     void update();
     void setHue(uint8_t &hue);
-    void setLevel(uint8_t &level);
+    void setBrightness(uint8_t &brightness);
     void setMode(uint8_t &mode);
-    void setSoundIntensity(uint8_t &soundIntensity);
+    void setSoundIntensity(long &soundIntensity);
 
 private:
     static const uint8_t NUM_LEDS = 60;

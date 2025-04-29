@@ -12,7 +12,10 @@ void Button::begin()
 
 void Button::update()
 {
-    ready = digitalRead(pin) == HIGH;
+    if (!ready)
+    {
+        ready = digitalRead(pin) == HIGH;
+    }
 }
 
 bool Button::isPressed()
@@ -20,6 +23,7 @@ bool Button::isPressed()
     if (ready && millis() > lastCheck + debounce)
     {
         ready = false;
+        lastCheck = millis();
         return digitalRead(pin) == LOW;
     }
 
