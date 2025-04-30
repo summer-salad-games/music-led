@@ -16,12 +16,14 @@ uint16_t hueMaxRange = 255;
 uint8_t hueSmooth = 33;
 
 uint8_t soundSensorPin = A2;
-uint16_t soundSensorDebounce = 250;
+uint16_t soundSensorDebounce = 10;
 uint16_t soundSensorMinRange = 0;
 uint16_t soundSensorMaxRange = 60;
-float soundSensorReferenceVoltage = 5;
+float soundSensorReferenceVoltage = 1.25;
 
-LedStrip ledStrip;
+uint8_t hue = 0;
+
+LedStrip ledStrip(hue);
 Button button(buttonPin, buttonDebounce);
 Knob brightnessKnob(brightnessPin, brightnessDebounce, brightnessMinRange, brightnessMaxRange, brightnessSmooth);
 Knob hueKnob(huePin, hueDebounce, hueMinRange, hueMaxRange, hueSmooth);
@@ -32,7 +34,8 @@ Controller controller(ledStrip, button, brightnessKnob, hueKnob, soundSensor);
 void initSerial()
 {
     Serial.begin(9600);
-    while (!Serial);
+    while (!Serial)
+        ;
     delay(1000);
     Serial.println("Serial console initilized");
 }

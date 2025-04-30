@@ -24,7 +24,7 @@ private:
 
     uint8_t lastBrightnessValue;
     uint8_t lastHueValue;
-
+    unsigned long lastSoundValue;
     unsigned long lastCheck;
 
     void initHueAndBrightness();
@@ -32,6 +32,7 @@ private:
     void updateButton();
     void updateBrightness();
     void updateHue();
+    void updateSound();
     void debugHueValue();
     void debugBrightnessValue();
 };

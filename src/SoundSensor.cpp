@@ -2,15 +2,13 @@
 #include <Arduino.h>
 
 SoundSensor::SoundSensor(uint8_t &pin, uint16_t &debounce, uint16_t &targetRangeMin, uint16_t &targetRangeMax, float &referenceVoltage)
-    : pin(pin), debounce(debounce), targetRangeMin(targetRangeMin), targetRangeMax(targetRangeMax), referenceVoltage(referenceVoltage) {}
+    : pin(pin), debounce(debounce), targetRangeMin(targetRangeMin), targetRangeMax(targetRangeMax), referenceVoltage(referenceVoltage), smoothedValue(0)
+{
+    baseLine = (referenceVoltage / 5.0) * 1023.0;
+}
 
 void SoundSensor::begin()
 {
-    baseLine = (1.25 / 5.0) * 1023.0;
-
-    rawValue = analogRead(pin);
-    lastCheck = millis();
-
     initMessage();
 }
 
@@ -25,29 +23,10 @@ void SoundSensor::update()
 long SoundSensor::get()
 {
     int currentDifference = rawValue - baseLine;
-    long result = map(abs(currentDifference), 0, baseLine, targetRangeMin, targetRangeMax);
+    long mapped = map(abs(currentDifference), 0, baseLine, targetRangeMin, targetRangeMax);
 
-    Serial.print("Raw: ");
-    Serial.print(rawValue);
-
-    Serial.print(", Base: ");
-    Serial.print(baseLine);
-
-    Serial.print(", Difference: ");
-    Serial.print(abs(currentDifference));
-
-    Serial.print(", Range min: ");
-    Serial.print(targetRangeMin);
-
-    Serial.print(", Range max: ");
-    Serial.print(targetRangeMax);
-
-    Serial.print(", Mapped: ");
-    Serial.println(result);
-
-    Serial.println();
-
-    return result;
+    smoothedValue = (smoothedValue * 3 + mapped) / 4;
+    return smoothedValue;
 }
 
 void SoundSensor::read()

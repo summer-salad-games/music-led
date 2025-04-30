@@ -1,6 +1,6 @@
 #include "LedStrip.hpp"
 
-LedStrip::LedStrip() {}
+LedStrip::LedStrip(uint8_t &hue) : hue(hue) {}
 
 void LedStrip::begin()
 {
@@ -14,17 +14,9 @@ void LedStrip::update()
 {
 }
 
-void LedStrip::setMode(uint8_t &mode)
+void LedStrip::setHue(uint8_t &newHue)
 {
-}
-
-void LedStrip::setHue(uint8_t &hue)
-{
-    for (int i = 0; i < NUM_LEDS; i++)
-    {
-        leds[i].setHue(hue);
-    }
-    FastLED.show();
+    hue = newHue;
 }
 
 void LedStrip::setBrightness(uint8_t &beightness)
@@ -33,17 +25,58 @@ void LedStrip::setBrightness(uint8_t &beightness)
     FastLED.show();
 }
 
-void LedStrip::setSoundIntensity(long &soundIntensity)
+void LedStrip::setSoundIntensity(unsigned long &soundIntensity)
 {
     FastLED.clear();
 
-    for (int i = 0; i < soundIntensity; i++)
+    uint8_t clamped = constrain(soundIntensity, 0, NUM_LEDS);
+    int center = NUM_LEDS / 2;
+    int half = clamped / 2;
+
+    if (currentMode == CENTER)
     {
-        leds[i] = INIT_COLOR;
+        for (int i = 0; i < half; i++)
+        {
+            leds[center - i - 1] = CRGB::Red;
+            leds[center - i - 1].setHue(hue);
+
+            leds[center + i] = CRGB::Red;
+            leds[center + i].setHue(hue);
+        }
+    }
+
+    if (currentMode == START)
+    {
+        for (int i = 0; i < clamped; i++)
+        {
+            leds[i] = CRGB::Red;
+            leds[i].setHue(hue);
+        }
+    }
+
+    if (currentMode == EDGES)
+    {
+        for (int i = 0; i < half; i++)
+        {
+            leds[i] = CRGB::Red;
+            leds[i].setHue(hue);
+
+            leds[NUM_LEDS - i - 1] = CRGB::Red;
+            leds[NUM_LEDS - i - 1].setHue(hue);
+        }
+    }
+
+    if (currentMode == END)
+    {
+        for (int i = 0; i < clamped; i++)
+        {
+            int ledIndex = NUM_LEDS - 1 - i;
+            leds[ledIndex] = CRGB::Red;
+            leds[ledIndex].setHue(hue);
+        }
     }
 
     FastLED.show();
-
 }
 
 void LedStrip::initColor()
@@ -65,4 +98,25 @@ void LedStrip::initMessage()
     Serial.print("LedStrip on pin ");
     Serial.print(DATA_PIN);
     Serial.println(" initialized");
+}
+
+void LedStrip::cycleMode()
+{
+    switch (currentMode)
+    {
+    case Mode::START:
+        currentMode = Mode::END;
+        break;
+    case Mode::END:
+        currentMode = Mode::EDGES;
+        break;
+    case Mode::EDGES:
+        currentMode = Mode::CENTER;
+        break;
+    case Mode::CENTER:
+        currentMode = Mode::START;
+        break;
+    default:
+        currentMode = Mode::START;
+    }
 }

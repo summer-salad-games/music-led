@@ -1,7 +1,7 @@
 #include "Controller.hpp"
 
 Controller::Controller(LedStrip &ledStrip, Button &button, Knob &brightnessKnob, Knob &hueKnob, SoundSensor &soundSensor)
-    : ledStrip(ledStrip), button(button), brightnessKnob(brightnessKnob), hueKnob(hueKnob), soundSensor(soundSensor) {}
+    : ledStrip(ledStrip), button(button), brightnessKnob(brightnessKnob), hueKnob(hueKnob), soundSensor(soundSensor), lastSoundValue(0) {}
 
 void Controller::begin()
 {
@@ -10,9 +10,6 @@ void Controller::begin()
     brightnessKnob.begin();
     hueKnob.begin();
     soundSensor.begin();
-
-    soundSensor.get();
-    lastCheck = millis();
 
     initHueAndBrightness();
     initMessage();
@@ -26,14 +23,7 @@ void Controller::update()
     hueKnob.update();
     soundSensor.update();
 
-    if (millis() > lastCheck + 0)
-    {
-        long sound = soundSensor.get();
-        Serial.println(sound);
-        ledStrip.setSoundIntensity(sound);
-        lastCheck = millis();
-    }
-
+    updateSound();
     updateButton();
     updateHue();
     updateBrightness();
@@ -45,6 +35,18 @@ void Controller::initHueAndBrightness()
     lastBrightnessValue = brightnessKnob.get();
     ledStrip.setHue(lastHueValue);
     ledStrip.setBrightness(lastBrightnessValue);
+}
+
+void Controller::updateSound()
+{
+    unsigned long sound = soundSensor.get();
+    long soundChange = lastSoundValue - sound;
+
+    if (abs(soundChange) >= 2)
+    {
+        lastSoundValue = sound;
+        ledStrip.setSoundIntensity(lastSoundValue);
+    }
 }
 
 void Controller::initMessage()
@@ -59,6 +61,7 @@ void Controller::updateButton()
 {
     if (button.isPressed())
     {
+        ledStrip.cycleMode();
         Serial.println("Button is pressed");
     }
 }

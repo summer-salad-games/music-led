@@ -14,6 +14,7 @@ public:
 private:
     unsigned long lastCheck;
     int rawValue;
+    long smoothedValue;
     int baseLine;
     
     uint8_t &pin;
