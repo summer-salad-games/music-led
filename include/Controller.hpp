@@ -24,14 +24,14 @@ private:
 
     uint8_t lastBrightnessValue;
     uint8_t lastHueValue;
-
-    unsigned long lastCheck;
+    unsigned long lastSoundValue;
 
     void initHueAndBrightness();
     void initMessage();
     void updateButton();
     void updateBrightness();
     void updateHue();
+    void updateSound();
     void debugHueValue();
     void debugBrightnessValue();
 };

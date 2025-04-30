@@ -1,66 +1,57 @@
 #include "SoundSensor.hpp"
 #include <Arduino.h>
 
-SoundSensor::SoundSensor(uint8_t &pin, uint16_t &debounce, uint16_t &targetRangeMin, uint16_t &targetRangeMax, float &referenceVoltage)
-    : pin(pin), debounce(debounce), targetRangeMin(targetRangeMin), targetRangeMax(targetRangeMax), referenceVoltage(referenceVoltage) {}
+SoundSensor::SoundSensor(uint8_t &pin, uint16_t &samplePeriod, uint16_t &targetRangeMin, uint16_t &targetRangeMax, float &referenceVoltage)
+    : pin(pin), samplePeriod(samplePeriod), targetRangeMin(targetRangeMin), targetRangeMax(targetRangeMax), referenceVoltage(referenceVoltage), signalMax(baseLine), signalMin(0), lastCheck(0), peakToPeak(0)
+{
+    baseLine = (referenceVoltage / 5.0) * 1023.0;
+}
 
 void SoundSensor::begin()
 {
-    baseLine = (1.25 / 5.0) * 1023.0;
-
-    rawValue = analogRead(pin);
-    lastCheck = millis();
-
     initMessage();
 }
 
 void SoundSensor::update()
 {
-    if (millis() > lastCheck + debounce)
-    {
-        read();
-    }
+    read();
 }
 
-long SoundSensor::get()
+unsigned long SoundSensor::get()
 {
-    int currentDifference = rawValue - baseLine;
-    long result = map(abs(currentDifference), 0, baseLine, targetRangeMin, targetRangeMax);
-
-    Serial.print("Raw: ");
-    Serial.print(rawValue);
-
-    Serial.print(", Base: ");
-    Serial.print(baseLine);
-
-    Serial.print(", Difference: ");
-    Serial.print(abs(currentDifference));
-
-    Serial.print(", Range min: ");
-    Serial.print(targetRangeMin);
-
-    Serial.print(", Range max: ");
-    Serial.print(targetRangeMax);
-
-    Serial.print(", Mapped: ");
-    Serial.println(result);
-
-    Serial.println();
-
+    unsigned long result = map(peakToPeak, 0, baseLine, targetRangeMin, targetRangeMax);
     return result;
 }
 
 void SoundSensor::read()
 {
-    rawValue = analogRead(pin);
-    lastCheck = millis();
+    unsigned long currentTime = millis();
+
+    if ((currentTime - lastCheck) < samplePeriod)
+    {
+        int16_t difference = analogRead(pin) - baseLine;
+        uint16_t sample = abs(difference);
+
+        if (sample < signalMin)
+            signalMin = sample;
+        if (sample > signalMax)
+            signalMax = sample;
+    }
+    else
+    {
+        peakToPeak = signalMax - signalMin;
+
+        signalMax = 0;
+        signalMin = 1023;
+        lastCheck = currentTime;
+    }
 }
 
 void SoundSensor::initMessage()
 {
     Serial.print("Sound Sensor on pin ");
     Serial.print(pin);
-    Serial.print(" and debounce ");
-    Serial.print(debounce);
+    Serial.print(" and sample period ");
+    Serial.print(samplePeriod);
     Serial.println(" initialized. ");
 }

@@ -33,7 +33,7 @@ void LedStrip::setBrightness(uint8_t &beightness)
     FastLED.show();
 }
 
-void LedStrip::setSoundIntensity(long &soundIntensity)
+void LedStrip::setSoundIntensity(unsigned long &soundIntensity)
 {
     FastLED.clear();
 

@@ -12,7 +12,7 @@ public:
     void setHue(uint8_t &hue);
     void setBrightness(uint8_t &brightness);
     void setMode(uint8_t &mode);
-    void setSoundIntensity(long &soundIntensity);
+    void setSoundIntensity(unsigned long &soundIntensity);
 
 private:
     static const uint8_t NUM_LEDS = 60;

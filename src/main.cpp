@@ -16,16 +16,16 @@ uint16_t hueMaxRange = 255;
 uint8_t hueSmooth = 33;
 
 uint8_t soundSensorPin = A2;
-uint16_t soundSensorDebounce = 250;
+uint16_t soundSensorSamplePeriod = 150;
 uint16_t soundSensorMinRange = 0;
 uint16_t soundSensorMaxRange = 60;
-float soundSensorReferenceVoltage = 5;
+float soundSensorReferenceVoltage = 1.25;
 
 LedStrip ledStrip;
 Button button(buttonPin, buttonDebounce);
 Knob brightnessKnob(brightnessPin, brightnessDebounce, brightnessMinRange, brightnessMaxRange, brightnessSmooth);
 Knob hueKnob(huePin, hueDebounce, hueMinRange, hueMaxRange, hueSmooth);
-SoundSensor soundSensor(soundSensorPin, soundSensorDebounce, soundSensorMinRange, soundSensorMaxRange, soundSensorReferenceVoltage);
+SoundSensor soundSensor(soundSensorPin, soundSensorSamplePeriod, soundSensorMinRange, soundSensorMaxRange, soundSensorReferenceVoltage);
 
 Controller controller(ledStrip, button, brightnessKnob, hueKnob, soundSensor);
 

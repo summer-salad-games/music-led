@@ -6,19 +6,20 @@
 class SoundSensor
 {
 public:
-    SoundSensor(uint8_t &pin, uint16_t &debounce, uint16_t &targetRangeMin, uint16_t &targetRangeMax, float &referenceVoltage);
+    SoundSensor(uint8_t &pin, uint16_t &samplePeriod, uint16_t &targetRangeMin, uint16_t &targetRangeMax, float &referenceVoltage);
     void begin();
     void update();
-    long get();
+    unsigned long get();
 
 private:
     unsigned long lastCheck;
-    int rawValue;
-    int baseLine;
-    
-    uint8_t &pin;
-    uint16_t &debounce;
+    uint16_t peakToPeak;
+    uint16_t baseLine;
+    uint16_t signalMin;
+    uint16_t signalMax;
 
+    uint8_t &pin;
+    uint16_t &samplePeriod;
     uint16_t &targetRangeMin;
     uint16_t &targetRangeMax;
 
