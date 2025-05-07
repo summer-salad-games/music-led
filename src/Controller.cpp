@@ -17,12 +17,12 @@ void Controller::begin()
 
 void Controller::update()
 {
-    ledStrip.update();
     button.update();
     brightnessKnob.update();
     hueKnob.update();
     soundSensor.update();
-
+    ledStrip.update();
+    
     updateSound();
     updateButton();
     updateHue();

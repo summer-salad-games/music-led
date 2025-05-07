@@ -28,7 +28,10 @@ private:
     static const uint8_t DATA_PIN = 11;
     static const uint8_t MAX_VOLTAGE = 5;
     static const uint16_t MAX_CURRENT = 2000;
+    static const uint16_t RAINBOW_DEBOUNCE = 50;
 
+    bool rainbow = false;
+    unsigned long rainbowLastCheck = 0;
     Mode currentMode = Mode::START;
     CRGB INIT_COLOR = CRGB::Red;
     CRGB leds[NUM_LEDS];

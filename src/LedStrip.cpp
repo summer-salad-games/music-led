@@ -12,11 +12,24 @@ void LedStrip::begin()
 
 void LedStrip::update()
 {
+    if (rainbow && millis() > rainbowLastCheck + RAINBOW_DEBOUNCE)
+    {
+        hue = (hue + 1) % 256;
+        rainbowLastCheck = millis();
+    }
 }
 
 void LedStrip::setHue(uint8_t &newHue)
 {
-    hue = newHue;
+    if (newHue >= 240)
+    {
+        rainbow = true;
+    }
+    else
+    {
+        hue = newHue;
+        rainbow = false;
+    }
 }
 
 void LedStrip::setBrightness(uint8_t &beightness)
@@ -37,10 +50,10 @@ void LedStrip::setSoundIntensity(unsigned long &soundIntensity)
     {
         for (int i = 0; i < half; i++)
         {
-            leds[center - i - 1] = CRGB::Red;
+            leds[center - i - 1] = INIT_COLOR;
             leds[center - i - 1].setHue(hue);
 
-            leds[center + i] = CRGB::Red;
+            leds[center + i] = INIT_COLOR;
             leds[center + i].setHue(hue);
         }
     }
@@ -49,7 +62,7 @@ void LedStrip::setSoundIntensity(unsigned long &soundIntensity)
     {
         for (int i = 0; i < clamped; i++)
         {
-            leds[i] = CRGB::Red;
+            leds[i] = INIT_COLOR;
             leds[i].setHue(hue);
         }
     }
@@ -58,10 +71,10 @@ void LedStrip::setSoundIntensity(unsigned long &soundIntensity)
     {
         for (int i = 0; i < half; i++)
         {
-            leds[i] = CRGB::Red;
+            leds[i] = INIT_COLOR;
             leds[i].setHue(hue);
 
-            leds[NUM_LEDS - i - 1] = CRGB::Red;
+            leds[NUM_LEDS - i - 1] = INIT_COLOR;
             leds[NUM_LEDS - i - 1].setHue(hue);
         }
     }
@@ -71,7 +84,7 @@ void LedStrip::setSoundIntensity(unsigned long &soundIntensity)
         for (int i = 0; i < clamped; i++)
         {
             int ledIndex = NUM_LEDS - 1 - i;
-            leds[ledIndex] = CRGB::Red;
+            leds[ledIndex] = INIT_COLOR;
             leds[ledIndex].setHue(hue);
         }
     }
